@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-01T03:58:24Z",
+  "title": "Design System: 讯哨",
+  "extensions": {
+    "colorMeta": {
+      "forest": { "role": "primary", "displayName": "Newsroom Forest", "tonalRamp": ["oklch(15% 0.04 175)", "oklch(26% 0.04 175)", "oklch(38% 0.04 175)", "oklch(50% 0.04 175)", "oklch(62% 0.04 175)", "oklch(74% 0.04 175)", "oklch(85% 0.03 175)", "oklch(95% 0.01 175)"] },
+      "coral": { "role": "secondary", "displayName": "Signal Coral", "tonalRamp": ["oklch(15% 0.11 35)", "oklch(26% 0.11 35)", "oklch(38% 0.11 35)", "oklch(50% 0.11 35)", "oklch(62% 0.11 35)", "oklch(74% 0.10 35)", "oklch(85% 0.07 35)", "oklch(95% 0.02 35)"] },
+      "ink": { "role": "neutral", "displayName": "Editorial Ink", "tonalRamp": ["oklch(15% 0.012 180)", "oklch(26% 0.012 180)", "oklch(38% 0.012 180)", "oklch(50% 0.012 180)", "oklch(62% 0.012 180)", "oklch(74% 0.01 180)", "oklch(85% 0.008 180)", "oklch(95% 0.004 180)"] },
+      "muted": { "role": "neutral", "displayName": "Muted Slate Green", "tonalRamp": ["oklch(15% 0.012 180)", "oklch(26% 0.012 180)", "oklch(38% 0.012 180)", "oklch(50% 0.012 180)", "oklch(62% 0.012 180)", "oklch(74% 0.01 180)", "oklch(85% 0.008 180)", "oklch(95% 0.004 180)"] },
+      "line": { "role": "neutral", "displayName": "Divider Mist", "tonalRamp": ["oklch(15% 0.008 160)", "oklch(26% 0.008 160)", "oklch(38% 0.008 160)", "oklch(50% 0.008 160)", "oklch(62% 0.008 160)", "oklch(74% 0.008 160)", "oklch(85% 0.006 160)", "oklch(95% 0.003 160)"] },
+      "paper": { "role": "neutral", "displayName": "Canvas Paper", "tonalRamp": ["oklch(15% 0.006 160)", "oklch(26% 0.006 160)", "oklch(38% 0.006 160)", "oklch(50% 0.006 160)", "oklch(62% 0.006 160)", "oklch(74% 0.006 160)", "oklch(85% 0.004 160)", "oklch(95% 0.002 160)"] },
+      "white": { "role": "neutral", "displayName": "White Sheet", "tonalRamp": ["oklch(15% 0 0)", "oklch(26% 0 0)", "oklch(38% 0 0)", "oklch(50% 0 0)", "oklch(62% 0 0)", "oklch(74% 0 0)", "oklch(85% 0 0)", "oklch(95% 0 0)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Page heading", "purpose": "The single dashboard page heading." },
+      "title": { "displayName": "Section title", "purpose": "Feed and rail headings." },
+      "body": { "displayName": "Interface body", "purpose": "Controls and supporting prose." },
+      "label": { "displayName": "Operational label", "purpose": "Counts, metadata, and timestamps." }
+    },
+    "shadows": [
+      { "name": "overview-ambient", "value": "0 5px 20px rgba(30,62,52,.035)", "purpose": "Very faint lift under the overview strip." },
+      { "name": "status-halo", "value": "0 0 0 3px #e5f1ea", "purpose": "Separates the live-status dot from its background." }
+    ],
+    "motion": [
+      { "name": "small-state", "value": "transform 0.2s, background 0.2s", "purpose": "Expansion arrow and toggle transitions." },
+      { "name": "loading-spin", "value": "spin 1.1s linear infinite", "purpose": "Loading and check-in-progress icons; reduced motion is respected." }
+    ],
+    "breakpoints": [
+      { "name": "rail-narrow", "value": "1120px" },
+      { "name": "sidebar-top", "value": "850px" },
+      { "name": "stacked-workspace", "value": "700px" },
+      { "name": "compact-mobile", "value": "510px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Check Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary command for checking monitored accounts.",
+      "html": "<button class=\"ds-check\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5\"/></svg>立即检查</button>",
+      "css": ".ds-check{display:inline-flex;align-items:center;justify-content:center;gap:9px;height:40px;padding:0 15px;border:1px solid var(--forest,#163e3a);border-radius:5px;background:var(--forest,#163e3a);color:#fff;font:600 12px 'DM Sans','Noto Sans SC',sans-serif;cursor:pointer}.ds-check:hover{background:#25534a}.ds-check:focus-visible{outline:3px solid #e38b6b;outline-offset:3px}.ds-check:active{background:#244e48}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "navigation-active",
+      "description": "Active section row inside the forest account rail.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-nav-active\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/><path d=\"M2 10h6l2 3h4l2-3h6\"/></svg>全部动态<span>12</span></a></nav>",
+      "css": ".ds-rail{background:var(--forest,#163e3a);padding:12px;width:230px}.ds-nav-active{display:flex;align-items:center;gap:11px;height:41px;padding:0 13px;border-radius:5px;background:#2e5950;color:#fff;text-decoration:none;font:600 14px 'DM Sans','Noto Sans SC',sans-serif}.ds-nav-active span{margin-left:auto;background:#426b61;border-radius:3px;padding:2px 6px;font-size:11px}.ds-nav-active:hover{background:#2a514a}.ds-nav-active:focus-visible{outline:3px solid #e38b6b;outline-offset:3px}"
+    },
+    {
+      "name": "News Tag",
+      "kind": "chip",
+      "refersTo": "tag-new",
+      "description": "Marks a post added in the latest run.",
+      "html": "<span class=\"ds-tag-new\">本轮新增</span>",
+      "css": ".ds-tag-new{display:inline-block;padding:4px 6px;border:1px solid #f0d5ca;border-radius:3px;background:#fbebe5;color:#ac513c;font:400 10px/1 'DM Sans','Noto Sans SC',sans-serif}"
+    },
+    {
+      "name": "Feed Search",
+      "kind": "input",
+      "description": "Compact search field aligned with the feed heading.",
+      "html": "<label class=\"ds-search\"><svg width=\"17\" height=\"17\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.35-4.35\"/></svg><input aria-label=\"搜索动态\" placeholder=\"搜索动态\"></label>",
+      "css": ".ds-search{display:flex;align-items:center;gap:6px;width:180px;padding:0 2px 5px;border-bottom:1px solid #cdd9d2;color:#9ca9a3}.ds-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--ink,#1d2929);font:400 11px 'DM Sans','Noto Sans SC',sans-serif}.ds-search:focus-within{border-color:#e38b6b;outline:2px solid #e38b6b;outline-offset:3px}"
+    },
+    {
+      "name": "Overview Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Run summary with a prominent count and bordered metric cells.",
+      "html": "<div class=\"ds-overview\"><div class=\"ds-overview-main\"><span>本轮检查</span><strong>03</strong><small>条新动态</small></div><div class=\"ds-overview-stat\"><span>监控账号</span><strong>02</strong><small>2 个正常</small></div></div>",
+      "css": ".ds-overview{display:grid;grid-template-columns:1.3fr 1fr;min-width:350px;min-height:142px;border:1px solid var(--line,#e1e7e5);border-radius:6px;background:#fff;box-shadow:0 5px 20px rgba(30,62,52,.035);color:var(--ink,#1d2929);font-family:'DM Sans','Noto Sans SC',sans-serif}.ds-overview>div{padding:23px 28px}.ds-overview-main{border-right:1px solid var(--line,#e1e7e5)}.ds-overview span{display:block;margin-bottom:10px;color:#586a60;font-size:11px;font-weight:600}.ds-overview strong{font-size:30px;font-weight:600;line-height:1.15}.ds-overview-main strong{font-size:45px;color:#19453d}.ds-overview small{display:block;margin-top:6px;color:#586a60;font-size:11px}.ds-overview-main small{display:inline;margin-left:9px;color:#365d52;font-size:13px;font-weight:600}"
+    },
+    {
+      "name": "Chronological Feed Row",
+      "kind": "custom",
+      "description": "Open editorial row with timeline, author, summary state, original-text preview, and source action.",
+      "html": "<article class=\"ds-news-row\"><div class=\"ds-news-time\"><i></i>09:42</div><div class=\"ds-news-body\"><div class=\"ds-news-meta\"><strong>监控账号</strong><span>@account</span><em>待总结</em></div><p>原始动态的文字预览，完整内容可以在列表中展开。</p><a href=\"#\">查看原文 ↗</a></div></article>",
+      "css": ".ds-news-row{display:grid;grid-template-columns:77px minmax(0,1fr);padding:24px 0 27px;border-bottom:1px solid var(--line,#e1e7e5);color:var(--ink,#1d2929);font-family:'DM Sans','Noto Sans SC',sans-serif}.ds-news-time{position:relative;padding:6px 0 0 20px;color:#586a60;font-size:11px;font-weight:600}.ds-news-time i{position:absolute;top:10px;left:0;width:7px;height:7px;border:2px solid #d4785b;border-radius:50%;background:#fff}.ds-news-meta{display:flex;align-items:center;gap:8px;font-size:12px}.ds-news-meta span{color:#586a60;font-size:11px}.ds-news-meta em{margin-left:auto;padding:4px 6px;border:1px solid #f0d5ca;border-radius:3px;background:#fbebe5;color:#ac513c;font-size:10px;font-style:normal}.ds-news-body p{max-width:73ch;margin:15px 0 16px;color:#2b3b36;font-size:15px;font-weight:600;line-height:1.8}.ds-news-body a{color:#4f7567;font-size:11px;font-weight:600;text-decoration:none}.ds-news-body a:hover{text-decoration:underline;text-underline-offset:3px}.ds-news-body a:focus-visible{outline:3px solid #e38b6b;outline-offset:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "新闻编辑台",
+    "overview": "The interface reads like a working newsroom desk: a fixed dark account rail beside a light, information-dense reporting surface. Its personality comes from editorial hierarchy, a timestamped feed, restrained green surfaces, and small coral signals for fresh or exceptional items. Counts and source details stay easy to scan. A full-width, user-triggered Chinese digest leads the working area, followed by the run overview and chronological original-post feed. A narrow right rail holds run details and settings; compact tags distinguish new items and summary state.",
+    "keyCharacteristics": [
+      "Compact operational density with a clear reading order.",
+      "Dark green navigation against a pale reporting canvas.",
+      "Thin dividers and tonal surfaces, with very little shadow.",
+      "Coral used sparingly for new-item and error cues."
+    ],
+    "rules": [
+      { "name": "The Signal Rule", "body": "Keep coral in small marks and state cues so new activity remains noticeable among neutral rows.", "section": "colors" },
+      { "name": "The Numeric Readout Rule", "body": "Use DM Sans for prominent counts and feed times; keep prose in the shared bilingual stack.", "section": "typography" },
+      { "name": "The Divider Rule", "body": "Use border and background contrast to structure dense information before adding elevation.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do keep account navigation, current-run metrics, and post history visually distinct through position and dividers.",
+      "Do reserve warm accent color for the timeline, fresh items, and exceptional status.",
+      "Do keep source links and original text accessible from every feed entry."
+    ],
+    "donts": [
+      "Don't turn each feed entry into a floating card; the implemented feed is a continuous chronological list.",
+      "Don't use large shadows or rounded promotional blocks in the working area.",
+      "Don't rely on color alone for new or failed states; retain the explicit labels and counts."
+    ]
+  }
+}
