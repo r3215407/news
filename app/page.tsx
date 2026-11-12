@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
-import { Activity, ArrowUpRight, Check, ChevronDown, Inbox, LoaderCircle, Plus, Radio, RefreshCw, Search, Sparkles, X } from "lucide-react";
+import { Activity, ArrowUpRight, ChevronDown, Inbox, LoaderCircle, Plus, Radio, RefreshCw, Search, Sparkles, X } from "lucide-react";
 import type { Account, NewsItem, PublicState, SummaryResult } from "@/lib/monitor";
 import { readSavedAccounts, writeSavedAccounts } from "@/lib/account-storage";
 import { readSavedSummaries, summaryKey, writeSavedSummaries, type SavedSummaries } from "@/lib/summary-storage";
@@ -246,6 +246,8 @@ export default function Home() {
   const latestIds = new Set(data.lastRun?.newIds ?? []);
   const accountLabel = selected === "all" ? "全部动态" : `@${selected} 的动态`;
   const activeAccounts = data.accounts.filter((account) => !account.error).length;
+  const hasAccountError = data.accounts.some((account) => account.error);
+  const mobileStatusLabel = loading ? "连接中" : !initialized ? "连接失败" : hasAccountError ? "部分异常" : autoCheck ? "监控中" : "已暂停";
   const runMessage = !data.lastRun
     ? "首次检查后，这里会显示本轮结果。"
     : data.accounts.length === 0
@@ -257,9 +259,9 @@ export default function Home() {
           : data.lastRun.newCount
             ? `发现 ${data.lastRun.newCount} 条尚未播报的动态，已加入简报。`
             : data.lastRun.expiredCount && !data.lastRun.duplicateCount
-              ? "前五条动态都已超过 24 小时，已跳过。"
+              ? "前五条动态都已超过 3 天，已跳过。"
               : data.lastRun.expiredCount
-                ? `近 24 小时的动态均已播报；另有 ${data.lastRun.expiredCount} 条过期动态已跳过。`
+                ? `近 3 天的动态均已播报；另有 ${data.lastRun.expiredCount} 条过期动态已跳过。`
               : !data.lastRun.fetchedCount
                 ? "本轮没有获取到动态。"
             : "前五条动态均已播报，无需重复处理。";
@@ -267,28 +269,28 @@ export default function Home() {
   return (
     <div className="app-shell">
       <aside className="sidebar">
-        <div className="brand"><span className="brand-mark"><Radio size={23} strokeWidth={2.25} /></span><div><strong>讯哨</strong><small>NEWS MONITOR</small></div></div>
-        <div className="sidebar-section">
+        <div className="brand"><span className="brand-mark"><Radio size={23} strokeWidth={2.25} /></span><div><strong>讯哨</strong><small>NEWS MONITOR</small></div><span className={`mobile-status ${!loading && (!initialized || hasAccountError) ? "has-error" : ""}`}><i />{mobileStatusLabel}</span></div>
+        <div className="sidebar-section desktop-work-section">
           <div className="section-caption">工作台</div>
-          <button className={`side-link ${selected === "all" ? "active" : ""}`} type="button" onClick={() => setSelected("all")}><Inbox size={18} />全部动态<span>{recentItems.length}</span></button>
+          <button className={`side-link ${selected === "all" ? "active" : ""}`} type="button" aria-pressed={selected === "all"} onClick={() => setSelected("all")}><Inbox size={18} />全部动态<span>{recentItems.length}</span></button>
         </div>
         <div className="sidebar-section accounts-section">
           <div className="section-caption caption-row"><span>监控账号 <b>{data.accounts.length}</b></span><button type="button" title="添加监控账号" aria-label="添加监控账号" disabled={loading} onClick={() => setShowAdd(!showAdd)}><Plus size={17} /></button></div>
           {showAdd && <form className="add-account" onSubmit={add}><label htmlFor="account-input">X 用户名或链接</label><div className="input-wrap"><span>@</span><input id="account-input" autoFocus placeholder="username" value={accountInput} onChange={(event) => setAccountInput(event.target.value)} /></div><div className="form-actions"><button type="button" onClick={() => setShowAdd(false)}>取消</button><button type="submit" disabled={adding || !accountInput.trim()}>{adding ? "添加中" : "添加账号"}</button></div></form>}
-          <div className="account-list">{data.accounts.map((account) => <div className={`account-line ${selected === account.handle ? "selected" : ""}`} key={account.handle}><button type="button" className="account-select" onClick={() => setSelected(account.handle)}><AccountAvatar account={account} size="small" /><span><strong>{account.name}</strong><small>@{account.handle}</small></span></button><span className={`account-status ${account.error ? "status-error" : ""}`} title={account.error || "正常"} /><button className="remove-account" type="button" title={`移除 @${account.handle}`} aria-label={`移除 @${account.handle}`} onClick={() => void remove(account.handle)}><X size={14} /></button></div>)}</div>
+          <div className="account-list"><button className={`mobile-all-account ${selected === "all" ? "selected" : ""}`} type="button" aria-pressed={selected === "all"} onClick={() => setSelected("all")}><Inbox size={16} />全部</button>{data.accounts.map((account) => <div className={`account-line ${selected === account.handle ? "selected" : ""}`} key={account.handle}><button type="button" className="account-select" aria-pressed={selected === account.handle} onClick={() => setSelected(account.handle)}><AccountAvatar account={account} size="small" /><span><strong>{account.name}</strong><small>@{account.handle}</small></span></button><span className={`account-status ${account.error ? "status-error" : ""}`} title={account.error || "正常"} /><button className="remove-account" type="button" title={`移除 @${account.handle}`} aria-label={`移除 @${account.handle}`} onClick={() => void remove(account.handle)}><X size={14} /></button></div>)}</div>
           {data.accounts.length === 0 && <p className="sidebar-empty">还没有监控账号。</p>}
         </div>
-        <div className="sidebar-bottom"><div className="sidebar-rule" /><div className="connection"><Activity size={16} /><span>运行状态</span><b>{loading ? "连接中" : initialized ? "运行中" : "连接失败"}</b></div><p>账号保存在此浏览器，播报记录保存在服务内存中</p></div>
+        <div className="sidebar-bottom"><div className="sidebar-rule" /><div className="connection"><Activity size={16} /><span>运行状态</span><b>{loading ? "连接中" : initialized ? "运行中" : "连接失败"}</b></div></div>
       </aside>
 
       <main className="main-content">
-        <header className="topbar"><div className="breadcrumb"><span>工作台</span><span className="slash">/</span><strong>{accountLabel}</strong></div><div className="topbar-right"><span className={`live-indicator ${data.accounts.some((account) => account.error) ? "has-error" : ""}`}><i />{data.accounts.some((account) => account.error) ? "部分异常" : autoCheck ? "实时监控" : "自动检查已暂停"}</span><span className="topbar-date">{new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Shanghai", year: "numeric", month: "long", day: "numeric", weekday: "long" }).format(new Date())}</span></div></header>
+        <header className="topbar"><div className="breadcrumb"><span>工作台</span><span className="slash">/</span><strong>{accountLabel}</strong></div><div className="topbar-right"><span className={`live-indicator ${hasAccountError ? "has-error" : ""}`}><i />{hasAccountError ? "部分异常" : autoCheck ? "实时监控" : "自动检查已暂停"}</span><span className="topbar-date">{new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Shanghai", year: "numeric", month: "long", day: "numeric", weekday: "long" }).format(new Date())}</span></div></header>
         <div className="page-content">
-          <div className="page-heading"><div><h1>新闻简报<span className="heading-period">.</span></h1><p>聚合关注账号的最新动态，查看本次新增与播报记录。</p></div><button className="refresh-button" type="button" onClick={() => void check(true)} disabled={checking || !data.accounts.some((account) => account.error)} title={!checking && !data.accounts.some((account) => account.error) ? "当前没有异常账号" : undefined}><RefreshCw size={16} className={checking ? "spinning" : ""} />{checking ? "正在检查" : "重试异常"}</button></div>
+          <div className="page-heading"><div><h1>新闻简报<span className="heading-period">.</span></h1><p>近 3 天 · {recentItems.length} 条动态</p></div><button className="refresh-button" type="button" aria-label={checking ? "正在重试异常账号" : "重试异常账号"} onClick={() => void check(true)} disabled={checking || !data.accounts.some((account) => account.error)} title={!checking && !data.accounts.some((account) => account.error) ? "当前没有异常账号" : "重试异常账号"}><RefreshCw size={16} className={checking ? "spinning" : ""} />{checking ? "正在检查" : "重试异常"}</button></div>
           {(error || storageError) && <div className="error-banner" role="alert"><span>{error || storageError}</span><button type="button" title="关闭提示" aria-label="关闭提示" onClick={() => { setError(null); setStorageError(null); }}><X size={16} /></button></div>}
           <section className="digest-section" aria-labelledby="digest-heading">
             <div className="digest-header">
-              <div><h2 id="digest-heading">中文总览</h2><span>近 24 小时 · 当前列表 {visibleItems.length} 条动态</span></div>
+              <div><h2 id="digest-heading">中文总览</h2><span>近 3 天 · 当前列表 {visibleItems.length} 条动态</span></div>
               {visibleItems.length > 0 && <button className="generate-button" type="button" onClick={() => void generateSummary()} disabled={generating || !data.aiEnabled || loading} title={!data.aiEnabled ? "请先配置 NVIDIA_API_KEY" : undefined}>{currentSummary ? <RefreshCw size={16} /> : <Sparkles size={16} />}{generating ? "正在生成总览" : currentSummary ? "重新生成" : "生成总览"}</button>}
             </div>
             {currentSummary ? <>
@@ -300,12 +302,11 @@ export default function Home() {
           </section>
           <div className="overview"><div className="overview-main"><span className="overview-label">本轮检查</span><strong>{loading ? "--" : String(data.lastRun?.newCount ?? 0).padStart(2, "0")}</strong><span className="overview-suffix">条新动态</span></div><div className="overview-stat"><span>监控账号</span><strong>{data.accounts.length.toString().padStart(2, "0")}</strong><small>{activeAccounts} 个正常</small></div><div className="overview-stat"><span>已跳过重复</span><strong>{(data.lastRun?.duplicateCount ?? 0).toString().padStart(2, "0")}</strong><small>本轮前五条内</small></div></div>
           <div className="workspace-grid">
-            <section className="feed-section" aria-labelledby="feed-heading"><div className="feed-header"><div><h2 id="feed-heading">{accountLabel}</h2><span>近 24 小时 · {visibleItems.length} 条播报记录</span></div><label className="search-box"><Search size={17} /><input aria-label="搜索动态" placeholder="搜索动态" value={query} onChange={(event) => setQuery(event.target.value)} />{query && <button type="button" title="清空搜索" aria-label="清空搜索" onClick={() => setQuery("")}><X size={14} /></button>}</label></div>
+            <section className="feed-section" aria-labelledby="feed-heading"><div className="feed-header"><div><h2 id="feed-heading">{accountLabel}</h2><span>近 3 天 · {visibleItems.length} 条播报记录</span></div><label className="search-box"><Search size={17} /><input aria-label="搜索动态" placeholder="搜索动态" value={query} onChange={(event) => setQuery(event.target.value)} />{query && <button type="button" title="清空搜索" aria-label="清空搜索" onClick={() => setQuery("")}><X size={14} /></button>}</label></div>
               <div className="feed-content">{loading ? <div className="empty-state"><LoaderCircle className="spinning" size={25} /><h3>正在连接监控服务</h3></div> : visibleItems.length ? visibleItems.map((item) => <NewsRow key={item.id} item={item} isLatest={latestIds.has(item.id)} />) : <div className="empty-state"><Inbox size={28} /><h3>{query ? "没有匹配的动态" : data.accounts.length ? checking ? "正在获取最新动态" : "暂无播报记录" : "先添加一个监控账号"}</h3><p>{query ? "试试其他关键词。" : data.accounts.length ? "新动态会在下一次检查后出现在这里。" : "点击左侧监控账号旁的加号开始。"}</p></div>}</div>
             </section>
             <aside className="insight-rail"><div className="rail-panel"><div className="rail-title"><span className="rail-icon"><Radio size={16} /></span><h2>本轮速览</h2></div><p className="rail-intro">{runMessage}</p><div className="run-details"><div><span>成功获取</span><strong>{data.lastRun?.fetchedCount ?? 0} 条</strong></div><div><span>重复跳过</span><strong>{data.lastRun?.duplicateCount ?? 0} 条</strong></div><div><span>过期跳过</span><strong>{data.lastRun?.expiredCount ?? 0} 条</strong></div><div><span>获取失败</span><strong>{data.lastRun?.failedCount ?? 0} 个账号</strong></div></div></div>
               <div className="rail-panel rail-setting"><div className="rail-title"><span className="rail-icon muted"><RefreshCw size={16} /></span><h2>检查设置</h2></div><label className="toggle-row"><span><strong>自动检查</strong><small>页面打开时，每 60 秒检查一次</small></span><input type="checkbox" checked={autoCheck} onChange={(event) => setAutoCheck(event.target.checked)} /><span className="switch" aria-hidden="true" /></label><div className="setting-note"><span className={data.aiEnabled ? "ai-dot enabled" : "ai-dot"} />{data.aiEnabled ? "NVIDIA 中文摘要已配置" : "NVIDIA API Key 未配置"}</div></div>
-              <div className="rail-footnote"><Check size={15} /><span>同一动态在当前服务进程内只播报一次。</span></div>
             </aside>
           </div>
         </div>

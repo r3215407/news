@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { addAccount, checkNews, parseHandle, publicState, removeAccount, summarizeNews } from "../lib/monitor.ts";
 import { isRecent, RECENT_WINDOW_MS } from "../lib/time.ts";
-import { ACCOUNTS_STORAGE_KEY, readSavedAccounts, writeSavedAccounts } from "../lib/account-storage.ts";
+import { ACCOUNTS_STORAGE_KEY, DEFAULT_ACCOUNT_HANDLES, readSavedAccounts, writeSavedAccounts } from "../lib/account-storage.ts";
 
 const nowSeconds = () => Math.floor(Date.now() / 1000);
 
@@ -11,6 +11,10 @@ test("validates account handles and X profile links", () => {
   assert.equal(parseHandle("https://x.com/Some_User"), "some_user");
   assert.equal(parseHandle("https://evil.example/Some_User"), null);
   assert.equal(parseHandle("not a handle"), null);
+});
+
+test("starts with the six requested monitor accounts", () => {
+  assert.deepEqual(publicState().accounts.map((account) => account.handle), [...DEFAULT_ACCOUNT_HANDLES]);
 });
 
 test("saves and restores a normalized account list, including an empty list", () => {
@@ -27,9 +31,15 @@ test("saves and restores a normalized account list, including an empty list", ()
   assert.deepEqual(readSavedAccounts(storage), ["another_user"]);
   writeSavedAccounts(storage, []);
   assert.deepEqual(readSavedAccounts(storage), []);
+  values.delete(ACCOUNTS_STORAGE_KEY);
+  values.set("news-monitor.accounts.v1", '["thsottiaux","another_user"]');
+  assert.deepEqual(readSavedAccounts(storage), ["thsottiaux", "another_user", ...DEFAULT_ACCOUNT_HANDLES.slice(1)]);
+  values.set("news-monitor.accounts.v1", "[]");
+  assert.deepEqual(readSavedAccounts(storage), []);
 });
 
 test("only reports the first five results once per account", async () => {
+  globalThis.newsMonitorState.accounts = publicState().accounts.filter((account) => account.handle === "thsottiaux");
   const originalFetch = globalThis.fetch;
   const makeStatuses = (handle, start) => Array.from({ length: 9 }, (_, index) => ({
     id: String(start + index),
@@ -178,9 +188,9 @@ test("does not report posts from an account removed mid-check", async () => {
   }
 });
 
-test("includes exactly the previous 24 hours and excludes older or future posts", () => {
+test("includes exactly the previous three days and excludes older or future posts", () => {
   const now = Date.now();
-  assert.equal(RECENT_WINDOW_MS, 24 * 60 * 60 * 1000);
+  assert.equal(RECENT_WINDOW_MS, 3 * 24 * 60 * 60 * 1000);
   assert.equal(isRecent(new Date(now - RECENT_WINDOW_MS).toISOString(), now), true);
   assert.equal(isRecent(new Date(now - RECENT_WINDOW_MS - 1).toISOString(), now), false);
   assert.equal(isRecent(new Date(now + 1).toISOString(), now), false);
@@ -193,8 +203,8 @@ test("skips old statuses and removes old items from public state", async () => {
   globalThis.fetch = async () => Response.json({ results: [
     { id: "1000", text: "already reported", created_timestamp: now },
     { id: "6000", text: "recent one", created_timestamp: now - 3600 },
-    { id: "5000", text: "old one", created_timestamp: now - 25 * 3600 },
-    { id: "6001", text: "recent two", created_timestamp: now - 23 * 3600 },
+    { id: "5000", text: "old one", created_timestamp: now - 73 * 3600 },
+    { id: "6001", text: "recent two", created_timestamp: now - 71 * 3600 },
     { id: "5001", text: "old two", created_timestamp: now - 5 * 24 * 3600 },
   ] });
   try {

@@ -1,5 +1,6 @@
 import { isRecent } from "./time.ts";
 import { makeSummary } from "./summarize.ts";
+import { DEFAULT_ACCOUNT_HANDLES } from "./account-storage.ts";
 
 export type Account = {
   handle: string;
@@ -70,7 +71,7 @@ declare global {
 }
 
 const state: MonitorState = globalThis.newsMonitorState ?? {
-  accounts: [{ handle: "thsottiaux", name: "Tibo", avatarUrl: null, lastCheckedAt: null, error: null }],
+  accounts: DEFAULT_ACCOUNT_HANDLES.map((handle) => ({ handle, name: handle === "thsottiaux" ? "Tibo" : handle, avatarUrl: null, lastCheckedAt: null, error: null })),
   accountsVersion: 0,
   checkVersion: 0,
   checkFailedOnly: false,
