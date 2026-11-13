@@ -19,7 +19,8 @@ The default sources are `@thsottiaux`, `@geminiapp`, `@openai`, `@anthropicai`, 
 
 ## Capabilities and Constraints
 - Fetch at most the first five statuses returned for each account on each check, regardless of the API's returned count.
-- Show and summarize only statuses published within the previous three days; exclude older statuses and expire already reported entries from the page.
+- Show and summarize only statuses published within the previous 24 hours; exclude older statuses and expire already reported entries from the page.
+- Fetch news only when the user requests a check; opening the page and adding an account do not trigger a check.
 - Save the monitored account list in browser localStorage and restore it when the page opens. Keep seen IDs and news entries in server memory only; those reset on server restart.
 - Generate one Chinese digest through NVIDIA's `nvidia/nemotron-3.5-bolt-e4b` only after the user clicks the button. Store generated digests by the set of source status IDs in browser localStorage; news checks never call the model.
 - Do not send email in this version.

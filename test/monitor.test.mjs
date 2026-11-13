@@ -188,9 +188,9 @@ test("does not report posts from an account removed mid-check", async () => {
   }
 });
 
-test("includes exactly the previous three days and excludes older or future posts", () => {
+test("includes exactly the previous 24 hours and excludes older or future posts", () => {
   const now = Date.now();
-  assert.equal(RECENT_WINDOW_MS, 3 * 24 * 60 * 60 * 1000);
+  assert.equal(RECENT_WINDOW_MS, 24 * 60 * 60 * 1000);
   assert.equal(isRecent(new Date(now - RECENT_WINDOW_MS).toISOString(), now), true);
   assert.equal(isRecent(new Date(now - RECENT_WINDOW_MS - 1).toISOString(), now), false);
   assert.equal(isRecent(new Date(now + 1).toISOString(), now), false);
@@ -203,8 +203,8 @@ test("skips old statuses and removes old items from public state", async () => {
   globalThis.fetch = async () => Response.json({ results: [
     { id: "1000", text: "already reported", created_timestamp: now },
     { id: "6000", text: "recent one", created_timestamp: now - 3600 },
-    { id: "5000", text: "old one", created_timestamp: now - 73 * 3600 },
-    { id: "6001", text: "recent two", created_timestamp: now - 71 * 3600 },
+    { id: "5000", text: "old one", created_timestamp: now - 25 * 3600 },
+    { id: "6001", text: "recent two", created_timestamp: now - 23 * 3600 },
     { id: "5001", text: "old two", created_timestamp: now - 5 * 24 * 3600 },
   ] });
   try {

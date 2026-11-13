@@ -54,7 +54,7 @@ The first viewport puts the monitored accounts, the current news heading, the us
 - **Digest:** One requested NVIDIA call produces one Chinese overview. Inline numbered citations open the corresponding X posts; an expandable source list provides the full set of originals. The existing digest can be regenerated manually.
 - **Run strip:** New count, monitored accounts, and duplicates occupy three stable tracks. Mobile numbers and labels stay inside their columns at 320px.
 - **Feed:** Continuous chronological rows with time, author, optional new marker, clamped original text, expandable full text, and direct X link. Rows are separated by rules, not cards.
-- **Insight rail:** Two unframed sections show run results and the auto-check setting. Failure counts remain textual rather than color-only.
+- **Insight rail:** One unframed section shows run results. Failure counts remain textual rather than color-only.
 - **Loading, empty, error, disabled:** Each state has explicit copy. The summary command is disabled without a configured key; an API error appears above the digest. Hover, touch, and keyboard focus are all visible.
 
 ## Interaction
@@ -63,6 +63,6 @@ The mobile account row is the signature interaction: switching sources is a dire
 
 ## Boundaries
 
-- Preserve the three-day recency window and the five-post fetch limit per account.
+- Preserve the 24-hour recency window and the five-post fetch limit per account. A check runs only when requested by the user.
 - Keep account and digest persistence in browser localStorage; the visual redesign does not change data ownership.
 - Do not add background email delivery or imply that monitoring continues with the page closed.
